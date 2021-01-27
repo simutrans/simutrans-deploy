@@ -38,7 +38,7 @@ init_sources(){
     fi
 
     # PAK128.Britain (for Simutrans Extended)
-    if [ ! -d "simutrans-pak128.britain" ]
+    if [ ! -d "simutrans-extended-pak128.britain" ]
     then
         git clone https://github.com/jamespetts/simutrans-pak128.britain
         mv simutrans-pak128.britain simutrans-extended-pak128.britain
@@ -65,7 +65,7 @@ init_aur(){
     fi
 
     # PAK128.Britain (for Simutrans Extended)
-    if [ ! -d "simutrans-pak128.britain" ]
+    if [ ! -d "simutrans-extended-pak128.britain" ]
     then
         git clone ssh://aur@aur.archlinux.org/simutrans-extended-pak128.britain.git
     fi
@@ -76,9 +76,12 @@ init_steam(){
 
     cd $DIR
     checkdir "steam"
-    wget -O sdk.zip https://partner.steamgames.com/downloads/steamworks_sdk.zip
-    unzip sdk.zip
-    rm sdk.zip
+    if [ ! -d "sdk" ]
+    then
+        wget -O sdk.zip https://partner.steamgames.com/downloads/steamworks_sdk.zip
+        unzip sdk.zip
+        rm sdk.zip
+    fi
 
     if [ ! -d nightlies ]
     then

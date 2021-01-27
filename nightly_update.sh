@@ -131,6 +131,7 @@ if ! ./init.sh
 then
     echo "Something failed. Maybe you didn't clone the repository?"
     echo "Exiting..."
+    exit
 fi
 
 echo "Updating Simutrans nightly builds"
