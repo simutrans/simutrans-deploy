@@ -16,7 +16,7 @@ check_svn() {
     cd $DIR/sources/$1
     if svn status -u | grep "*"; then
         svn up
-        VERSION="r$(svnversion | tr -d 'A-z')"
+        VERSION="r$(svn info --show-item revision)"
         echo "New version $VERSION of $1 found, updating..."
         return 0
     else
@@ -50,6 +50,11 @@ update_aur() {
     git commit -m "nightly build $VERSION"
     git push
     echo "Updating $1 to version $VERSION"
+}
+
+update_aur_pkgsums() {
+    cd $DIR/aur/nightly/$1
+	updpkgsums $1
 }
 
 update_steam_standard(){
@@ -147,6 +152,6 @@ if check_git simutrans-extended-git; then
 fi
 
 if check_git simutrans-extended-pak128.britain; then
-    update_aur simutrans-extended-pak128.britain
+    update_aur_pkgsums simutrans-extended-pak128.britain
     update_steam_extended_pak
 fi
