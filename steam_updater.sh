@@ -13,8 +13,6 @@
 # However for ease of use you can upload to the current point release branch, then merge it with the default branch
 #
 # If you want to upload to a new branch, first you need to create it from Steamworks.
-# 
-# ¡Downloads URLs need to be updated manually in this script!
 
 mv_pak() {
 	if [ -d PAK* ]; then
@@ -27,15 +25,17 @@ mv_pak() {
 upload_content(){
 	cd "$DIR/steam/repos/$PAK_NAME"
 	echo "Upload new version to branch..."
-	select yn in "122.0" "nightly" "Done"; do
+	select yn in "122.0" "nightly" "Exit"; do
 		case $yn in
 			"122.0" ) 
-				sed -i 's/"setlive".*$/"setlive"   "122"/g' app_build_434520.vdf
+				sed -i 's/"setlive".*$/"setlive"   "122.0"/g' app_build_434520.vdf
 				break;;
 			"nightly" ) 
 				sed -i 's/"setlive".*$/"setlive"   "nightly"/g' app_build_434520.vdf
 				break;;
-			"Done" ) exit; break;;
+			"Exit" ) 
+				rm -rf "$DIR/steam/repos/$PAK_NAME/pak"
+				exit; break;;
 		esac
 	done
 	bash $STEAM_CMD +login "$STEAM_USER" "$STEAM_PASS" +run_app_build "$DIR/steam/repos/$PAK_NAME/app_build_434520.vdf" +quit
@@ -53,11 +53,13 @@ select yn in "pak128.german" "Cancel"; do
     case $yn in
 		"pak128.german" ) 
 			PAK_NAME=pak128.german; 
-			URL="https://pak128-german.de/PAK128.german_VS2.1.beta.zip";
 			break;;
 		"Cancel" ) exit; break;;
     esac
 done
+
+echo "Please introduce the pakset download URL (zip)"
+read URL
 
 cd "$DIR/steam/repos/$PAK_NAME"
 mkdir -p pak
@@ -77,4 +79,3 @@ else
 fi
 
 upload_content
-rm -rf "$DIR/steam/repos/$PAK_NAME/pak"
