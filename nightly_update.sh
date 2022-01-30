@@ -54,24 +54,26 @@ update_aur() {
 
 update_aur_pkgsums() {
     cd $DIR/aur/nightly/$1
-	updpkgsums $1
+	updpkgsums
+    rm *.tar.gz
+    update_aur $1
 }
+
+
+# Input:
+#   $1: platform (lin, win, mac)
+#   $2: link to zip file
+#   $3: name of the binary (simutrans.exe or simutrans)
 
 update_steam_standard(){
-
-    # TODO: This only updates the binary, NOT the base files
-    # Input:
-    #   $1: platform (lin, win, mac)
-    #   $2: link to zip file
-    #   $3: name of the binary (simutrans.exe or simutrans)
+	# TODO This only updates the binary, NOT the base files
+	# TODO Mac
     update_steam_standard_bin lin "https://nightly.simutrans.com/download.php?os=Linux&r=latest" simutrans
     update_steam_standard_bin win "https://nightly.simutrans.com/download.php?os=Windows&r=latest" simutrans.exe
-    #TODO Mac
 }
 update_steam_standard_bin(){
-    cd $DIR/steam/nightlies/standard
-    mkdir $1
-    cd $1
+    mkdir -p $DIR/steam/repos/standard/content
+    cd $DIR/steam/repos/standard/content
     mkdir src
     cd src
     if wget -O $1.zip $2 
@@ -80,50 +82,47 @@ update_steam_standard_bin(){
         cd ..
         mv src/$3 $3
         rm -rf src
-        bash  $STEAM_CMD +login "$STEAM_USER" "$STEAM_PASS" +run_app_build "$DIR/steam/nightlies/standard/app_build_434520_$1.vdf" +quit
+        bash  $STEAM_CMD +login "$STEAM_USER" "$STEAM_PASS" +run_app_build "$DIR/steam/repos/standard/app_build_434520_$1.vdf" +quit
     else
         echo "Failed to download from $2, aborting the deploy of Simutrans for $1"
     fi
-    rm -rf $DIR/steam/nightlies/standard/$1
+    rm -rf $DIR/steam/repos/standard/content
 }
 
+# Input:
+#   $1: platform (lin, win, mac)
+#   $2: link to zip file
+#   $3: name of the binary (simutrans.exe or simutrans)
 update_steam_extended(){
 
-    # TODO: This only updates the binary, NOT the base files
-    # Input:
-    #   $1: platform (lin, win, mac)
-    #   $2: link to zip file
-    #   $3: name of the binary (simutrans.exe or simutrans)
+    # TODO This only updates the binary, NOT the base files
+    # TODO Mac
     update_steam_extended_bin lin "http://bridgewater-brunel.me.uk/downloads/nightly/linux-x64/simutrans-extended" simutrans
     update_steam_extended_bin win "http://bridgewater-brunel.me.uk/downloads/nightly/windows/Simutrans-Extended-64.exe" simutrans.exe
-    #TODO Mac
 }
 
 update_steam_extended_bin(){
-    cd $DIR/steam/nightlies/extended
-    mkdir $1
-    cd $1
+    mkdir -p $DIR/steam/repos/extended/content
+    cd $DIR/steam/repos/extended/content
     if wget -O $3 $2 
     then
-        bash  $STEAM_CMD +login "$STEAM_USER" "$STEAM_PASS" +run_app_build "$DIR/steam/nightlies/extended/app_build_434520_$1.vdf" +quit
+        bash  $STEAM_CMD +login "$STEAM_USER" "$STEAM_PASS" +run_app_build "$DIR/steam/repos/extended/app_build_434520_$1.vdf" +quit
     else
         echo "Failed to download from $2, aborting the deploy of Simutrans Extended for $1"
     fi
-    rm -rf $DIR/steam/nightlies/extended/$1
+    rm -rf $DIR/steam/repos/extended/content
 }
 
 update_steam_extended_pak(){
-    cd $DIR/steam/nightlies/pak128.britain-ex
-    mkdir pak
-    cd pak
+    mkdir -p $DIR/steam/repos/pak128.britain-ex/content
+    cd $DIR/steam/repos/pak128.britain-ex/content
     wget -O pak128.tar.gz "http://bridgewater-brunel.me.uk/downloads/nightly/pakset/pak128.britain-ex-nightly.tar.gz"
     mkdir pak128.britain-ex
     tar xzvf pak128.tar.gz -C pak128.britain-ex
     rm pak128.tar.gz
     cd ..
-    bash  $STEAM_CMD +login "$STEAM_USER" "$STEAM_PASS" +run_app_build "$DIR/steam/nightlies/pak128.britain-ex/app_build_434520.vdf" +quit
-    rm -rf $DIR/steam/nightlies/pak128.britain-ex/pak
-$1
+    bash  $STEAM_CMD +login "$STEAM_USER" "$STEAM_PASS" +run_app_build "$DIR/steam/repos/pak128.britain-ex/app_build_434520.vdf" +quit
+    rm -rf $DIR/steam/repos/pak128.britain-ex/content
 }
 
 DIR=$(pwd)

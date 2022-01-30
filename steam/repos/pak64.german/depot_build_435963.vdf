@@ -1,14 +1,14 @@
 "DepotBuildConfig"
 {
 	// Set your assigned depot ID here
-	"DepotID" "434523"
+	"DepotID" "435963"
 
 	// Set a root for all content.
 	// All relative paths specified below (LocalPath in FileMapping entries, and FileExclusion paths)
 	// will be resolved relative to this root.
 	// If you don't define ContentRoot, then it will be assumed to be
 	// the location of this script file, which probably isn't what you want
-	"ContentRoot"	"../lin"
+	"ContentRoot"	"."
 
 	// include all files recursivley
   "FileMapping"

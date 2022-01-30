@@ -16,29 +16,33 @@
 
 mv_pak() {
 	if [ -d PAK* ]; then
-		mv PAK* $PAK_NAME
+		mv PAK* $REPO_NAME
 	else
-		mv pak* $PAK_NAME
+		mv pak* $REPO_NAME
 	fi
 }
 
 upload_content(){
-	cd "$DIR/steam/repos/$PAK_NAME"
+	cd "$DIR/steam/repos/$REPO_NAME"
 	echo "Upload new version to branch..."
-	select yn in "122.0" "nightly" "Exit"; do
+	select yn in "122.0" "123.0" "nightly" "Exit"; do
 		case $yn in
 			"122.0" ) 
 				sed -i 's/"setlive".*$/"setlive"   "122.0"/g' app_build_434520.vdf
+				break;;
+			"123.0" ) 
+				sed -i 's/"setlive".*$/"setlive"   "123.0"/g' app_build_434520.vdf
 				break;;
 			"nightly" ) 
 				sed -i 's/"setlive".*$/"setlive"   "nightly"/g' app_build_434520.vdf
 				break;;
 			"Exit" ) 
-				rm -rf "$DIR/steam/repos/$PAK_NAME/pak"
+				rm -rf "$DIR/steam/repos/$REPO_NAME/content"
+				rm -rf "$DIR/steam/repos/$REPO_NAME/output"
 				exit; break;;
 		esac
 	done
-	bash $STEAM_CMD +login "$STEAM_USER" "$STEAM_PASS" +run_app_build "$DIR/steam/repos/$PAK_NAME/app_build_434520.vdf" +quit
+	bash $STEAM_CMD +login "$STEAM_USER" "$STEAM_PASS" +run_app_build "$DIR/steam/repos/$REPO_NAME/app_build_434520.vdf" +quit
 	upload_content
 }
 
@@ -49,10 +53,16 @@ STEAM_PASS=$1
 
 echo "IMPORTANT: Remember that this utility can't be used for updating the 'default' branch. Yo still need to use the web interface for that."
 
-select yn in "pak128.german" "Cancel"; do
+select yn in "pak64.german" "pak128" "pak128.german" "Cancel"; do
     case $yn in
+		"pak64.german" ) 
+			REPO_NAME=pak64.german; 
+			break;;
+		"pak128" ) 
+			REPO_NAME=pak128; 
+			break;;
 		"pak128.german" ) 
-			PAK_NAME=pak128.german; 
+			REPO_NAME=pak128.german; 
 			break;;
 		"Cancel" ) exit; break;;
     esac
@@ -61,9 +71,9 @@ done
 echo "Please introduce the pakset download URL (zip)"
 read URL
 
-cd "$DIR/steam/repos/$PAK_NAME"
-mkdir -p pak
-cd pak
+cd "$DIR/steam/repos/$REPO_NAME"
+mkdir -p content
+cd content
 wget $URL
 unzip *.zip
 rm *.zip
@@ -71,7 +81,7 @@ rm *.zip
 if [ -d simutrans ]; then
 	cd simutrans
 	mv_pak
-	mv $PAK_NAME ../$PAK_NAME
+	mv $REPO_NAME ../$REPO_NAME
 	cd ..
 	rm -rf simutrans
 else

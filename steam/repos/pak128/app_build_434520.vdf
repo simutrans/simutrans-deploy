@@ -1,7 +1,7 @@
 "appbuild"
 {
 	"appid"	"434520"
-	"desc" "pak128.german update" // description for this build
+	"desc" "pak128 update" // description for this build
 	"buildoutput" "output\" // build output folder for .log, .csm & .csd files, relative to location of this file
 	"contentroot" "content\" // root content folder, relative to location of this file
 	"setlive"   "nightly"
@@ -10,6 +10,6 @@
 	
 	"depots"
 	{
-		"434633" "depot_build_434633.vdf"
+		"434529" "depot_build_434529.vdf"
 	}
 }

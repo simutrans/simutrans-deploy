@@ -83,7 +83,7 @@ init_steam(){
         rm sdk.zip
     fi
 
-    if [ ! -d nightlies ]
+    if [ ! -d repos ]
     then
         return 1
     fi
