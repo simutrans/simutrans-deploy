@@ -151,6 +151,6 @@ if check_git simutrans-extended-git; then
 fi
 
 if check_git simutrans-extended-pak128.britain; then
-    update_aur_pkgsums simutrans-extended-pak128.britain
+    update_aur simutrans-extended-pak128.britain
     update_steam_extended_pak
 fi
