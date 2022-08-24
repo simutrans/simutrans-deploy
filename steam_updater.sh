@@ -51,9 +51,9 @@ STEAM_CMD="$DIR/steam/sdk/tools/ContentBuilder/builder_linux/steamcmd.sh"
 STEAM_USER="simutransbuild"
 STEAM_PASS=$1
 
-echo "IMPORTANT: Remember that this utility can't be used for updating the 'default' branch. Yo still need to use the web interface for that."
+echo "IMPORTANT: Remember that this utility can't be used for updating the 'default' branch. You still need to use the web interface for that."
 
-select yn in "pak64.german" "pak128" "pak128.german" "Cancel"; do
+select yn in "pak64.german" "pak128" "pak128.german" "pak192.comic" "Cancel"; do
     case $yn in
 		"pak64.german" ) 
 			REPO_NAME=pak64.german; 
@@ -63,6 +63,9 @@ select yn in "pak64.german" "pak128" "pak128.german" "Cancel"; do
 			break;;
 		"pak128.german" ) 
 			REPO_NAME=pak128.german; 
+			break;;
+		"pak192.comic" ) 
+			REPO_NAME=pak192.comic; 
 			break;;
 		"Cancel" ) exit; break;;
     esac
