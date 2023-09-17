@@ -11,6 +11,27 @@
 # If you have not initialized the repositories, run first "init.sh". 
 # This will also download Steam SDK and AUR repositories used in this script.
 
+UPDATE_STEAM=false
+UPDATE_AUR=false
+OMIT_CHECK_CHANGES=false
+
+while getopts 'ahos:' opt; do
+	case "$opt" in
+		a)
+			UPDATE_AUR=true
+			;;
+		o)
+			OMIT_CHECK_CHANGES=true
+			;;
+		s)
+			UPDATE_STEAM=true
+			STEAM_PASS=${OPTARG}
+			;;
+		?|h)
+			echo "Usage: $(basename $0) [-a] [-o] [-s password]"
+			exit 1
+	esac
+done
 
 check_svn() {
     cd $DIR/sources/$1
@@ -66,10 +87,10 @@ update_aur_pkgsums() {
 #   $3: name of the binary (simutrans.exe or simutrans)
 
 update_steam_standard(){
-	# TODO This only updates the binary, NOT the base files
-	# TODO Mac
-    update_steam_standard_bin lin "https://nightly.simutrans.com/download.php?os=Linux&r=latest" simutrans
-    update_steam_standard_bin win "https://nightly.simutrans.com/download.php?os=Windows&r=latest" simutrans.exe
+    update_steam_standard_bin lin "https://github.com/simutrans/simutrans/releases/download/Nightly/simulinux-x64-nightly.zip" simutrans
+    update_steam_standard_bin win "https://github.com/simutrans/simutrans/releases/download/Nightly/simuwin64-SDL2-nightly.zip" simutrans.exe
+    update_steam_standard_bin mac "https://github.com/simutrans/simutrans/releases/download/Nightly/simumac-nightly.zip" simutrans.app
+	update_steam_standard_base
 }
 update_steam_standard_bin(){
     mkdir -p $DIR/steam/repos/standard/content
@@ -80,7 +101,7 @@ update_steam_standard_bin(){
     then
         unzip "$1.zip"
         cd ..
-        mv src/$3 $3
+        mv src/simutrans/$3 $3
         rm -rf src
         bash  $STEAM_CMD +login "$STEAM_USER" "$STEAM_PASS" +run_app_build "$DIR/steam/repos/standard/app_build_434520_$1.vdf" +quit
     else
@@ -89,16 +110,26 @@ update_steam_standard_bin(){
     rm -rf $DIR/steam/repos/standard/content
 }
 
+update_steam_standard_base(){
+	mkdir -p $DIR/steam/repos/standard/content
+	cp -r $DIR/sources/simutrans-svn/simutrans/ $DIR/steam/repos/standard/content/
+	cd $DIR/steam/repos/standard/content
+	bash $DIR/sources/simutrans-svn/tools/get_lang_files.sh
+	mv $DIR/steam/repos/standard/content/simutrans/*  $DIR/steam/repos/standard/content
+	rm -rf steam/repos/standard/content/simutrans 
+	bash  $STEAM_CMD +login "$STEAM_USER" "$STEAM_PASS" +run_app_build "$DIR/steam/repos/standard/app_build_434520_base.vdf" +quit
+	rm -rf $DIR/steam/repos/standard/content
+}
+
 # Input:
 #   $1: platform (lin, win, mac)
 #   $2: link to zip file
 #   $3: name of the binary (simutrans.exe or simutrans)
 update_steam_extended(){
-
-    # TODO This only updates the binary, NOT the base files
     # TODO Mac
     update_steam_extended_bin lin "http://bridgewater-brunel.me.uk/downloads/nightly/linux-x64/simutrans-extended" simutrans
     update_steam_extended_bin win "http://bridgewater-brunel.me.uk/downloads/nightly/windows/Simutrans-Extended-64.exe" simutrans.exe
+	update_steam_extended_base
 }
 
 update_steam_extended_bin(){
@@ -111,6 +142,13 @@ update_steam_extended_bin(){
         echo "Failed to download from $2, aborting the deploy of Simutrans Extended for $1"
     fi
     rm -rf $DIR/steam/repos/extended/content
+}
+
+update_steam_extended_base(){
+	mkdir -p $DIR/steam/repos/extended/content
+	cp -r $DIR/sources/simutrans-extended-git/simutrans/* $DIR/steam/repos/extended/content/
+	bash  $STEAM_CMD +login "$STEAM_USER" "$STEAM_PASS" +run_app_build "$DIR/steam/repos/extended/app_build_434520_base.vdf" +quit
+	rm -rf $DIR/steam/repos/extended/content
 }
 
 update_steam_extended_pak(){
@@ -126,10 +164,9 @@ update_steam_extended_pak(){
 }
 
 DIR=$(pwd)
-STEAM_CMD="$DIR/steam/sdk/tools/ContentBuilder/builder_linux/steamcmd.sh"
+STEAM_CMD="/usr/games/steamcmd"
 STEAM_USER="simutransbuild"
-STEAM_PASS="$1"
-
+echo $DIR
 echo "Initializing..."
 if ! ./init.sh
 then
@@ -140,17 +177,31 @@ fi
 
 echo "Updating Simutrans nightly builds"
 
-if check_svn simutrans-svn; then
-    update_aur simutrans-svn
-    update_steam_standard
+	echo "$OMIT_CHECK_CHANGES"
+	echo "$UPDATE_STEAM"
+if [ "$OMIT_CHECK_CHANGES" = true ] || check_svn simutrans-svn ; then
+	if [ "$UPDATE_AUR" = true ] ; then
+		update_aur simutrans-svn
+	fi
+	if [ "$UPDATE_STEAM" = true ] ; then
+		update_steam_standard
+	fi
 fi
 
-if check_git simutrans-extended-git; then
-    update_aur simutrans-extended-git
-    update_steam_extended
+if [ "$OMIT_CHECK_CHANGES" = true ] || check_git simutrans-extended-git ; then
+	if [ "$UPDATE_AUR" = true ] ; then
+		update_aur simutrans-extended-git
+	fi
+	if [ "$UPDATE_STEAM" = true ] ; then
+		update_steam_extended
+	fi
 fi
 
-if check_git simutrans-extended-pak128.britain; then
-    update_aur simutrans-extended-pak128.britain
-    update_steam_extended_pak
+if [ "$OMIT_CHECK_CHANGES" = true ] || check_git simutrans-extended-pak128.britain ; then
+	if [ "$UPDATE_AUR" = true ] ; then
+		update_aur simutrans-extended-pak128.britain
+	fi
+	if [ "$UPDATE_STEAM" = true ] ; then
+		update_steam_extended_pak
+	fi
 fi
