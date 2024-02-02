@@ -76,12 +76,13 @@ init_steam(){
 
     cd $DIR
     checkdir "steam"
-    if [ ! -d "sdk" ]
+    if [ ! -f "sdk/tools/ContentBuilder/builder_linux/linux32/steamcmd" ]
     then
-        wget -O sdk.zip https://partner.steamgames.com/downloads/steamworks_sdk.zip
-        unzip sdk.zip
-        rm sdk.zip
+        # Downloading the SDK now requires authentication...
+        echo "Please download Steam SDK (https://partner.steamgames.com/downloads/list) and unzip it in steam/sdk"
+        return 1
     fi
+    chmod +x sdk/tools/ContentBuilder/builder_linux/linux32/steamcmd
 
     if [ ! -d repos ]
     then
