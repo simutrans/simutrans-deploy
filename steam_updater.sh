@@ -25,10 +25,10 @@ mv_pak() {
 upload_content(){
 	cd "$DIR/steam/repos/$REPO_NAME"
 	echo "Upload new version to branch..."
-	select yn in "122.0" "123.0" "nightly" "Exit"; do
+	select yn in "123.0" "124.0" "nightly" "Exit"; do
 		case $yn in
-			"122.0" ) 
-				sed -i 's/"setlive".*$/"setlive"   "122.0"/g' app_build_434520.vdf
+			"124.0" )
+				sed -i 's/"setlive".*$/"setlive"   "124.0"/g' app_build_434520.vdf
 				break;;
 			"123.0" ) 
 				sed -i 's/"setlive".*$/"setlive"   "123.0"/g' app_build_434520.vdf
@@ -53,8 +53,11 @@ STEAM_PASS=$1
 
 echo "IMPORTANT: Remember that this utility can't be used for updating the 'default' branch. You still need to use the web interface for that."
 
-select yn in "pak64.german" "pak128" "pak128.german" "pak192.comic" "Cancel"; do
+select yn in "pak64" "pak64.german" "pak128" "pak128.german" "pak192.comic" "Cancel"; do
     case $yn in
+		"pak64" )
+			REPO_NAME=pak64;
+			break;;
 		"pak64.german" ) 
 			REPO_NAME=pak64.german; 
 			break;;
