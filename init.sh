@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # This script will:
-#  1) Download simutrans sources
+#  1) Download simutrans source repositories
 #  2) Download nightly updated AUR packages
-#  3) Download Steam SDK
+#  3) Download Steam SDK => No longer true, Steam SDK needs manual download :-(
 #
 #  It is intended to be used before nightly_update.sh script provided in this repository
 #
@@ -83,6 +83,11 @@ init_steam(){
         return 1
     fi
     chmod +x sdk/tools/ContentBuilder/builder_linux/linux32/steamcmd
+
+    if [ ! -d "simutrans-steam-builds" ]
+    then
+        git clone git@github.com:simutrans/simutrans-steam-builds.git
+    fi
 
     if [ ! -d repos ]
     then
