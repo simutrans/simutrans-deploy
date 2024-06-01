@@ -8,7 +8,20 @@
 #  It is intended to be used before nightly_update.sh script provided in this repository
 #
 # git, svn, wget, unzip needed
-# If you don't need AUR (for example), comment the "init_aur" line at the end
+
+while getopts 'ahs' opt; do
+	case "$opt" in
+		a)
+			INIT_AUR=true
+			;;
+		s)
+			INIT_STEAM=true
+			;;
+		?|h)
+			echo "Usage: $(basename $0) [-a] [-s]"
+			exit 1
+	esac
+done
 
 checkdir(){
     if [ ! -d $1 ]
@@ -97,5 +110,9 @@ init_steam(){
 
 DIR=$(pwd)
 init_sources
-init_aur
-init_steam
+if [ "$INIT_AUR" = true ] ; then
+    init_aur
+fi
+if [ "$INIT_STEAM" = true ] ; then
+    init_steam
+fi

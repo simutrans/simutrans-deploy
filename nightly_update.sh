@@ -166,13 +166,25 @@ echo "Base dir: $DIR"
 echo "Update AUR: $UPDATE_AUR"
 echo "Update Steam: $UPDATE_STEAM"
 echo "Manual Version: $OMIT_CHECK_CHANGES $VERSION"
+
 echo "Initializing..."
-if ! ./init.sh
-then
-    echo "Something failed. Maybe you didn't clone the repository?"
-    echo "Exiting..."
-    exit
+if [ "$UPDATE_AUR" = true ] ; then
+    if ! ./init.sh -a
+    then
+        echo "Something failed. Maybe you didn't clone the repository?"
+        echo "Exiting..."
+        exit
+    fi
 fi
+if [ "$UPDATE_STEAM" = true ] ; then
+    if ! ./init.sh -s
+    then
+        echo "Something failed. Maybe you didn't clone the repository?"
+        echo "Exiting..."
+        exit
+    fi
+fi
+
 
 echo "Updating Simutrans nightly builds"
 
