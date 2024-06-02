@@ -25,13 +25,13 @@ mv_pak() {
 upload_content(){
 	cd "$DIR/steam/repos/$REPO_NAME"
 	echo "Upload new version to branch..."
-	select yn in "123.0" "124.0" "nightly" "Exit"; do
+	select yn in "124.1" "124.0" "nightly" "Exit"; do
 		case $yn in
 			"124.0" )
 				sed -i 's/"setlive".*$/"setlive"   "124.0"/g' app_build_434520.vdf
 				break;;
-			"123.0" ) 
-				sed -i 's/"setlive".*$/"setlive"   "123.0"/g' app_build_434520.vdf
+			"124.1" )
+				sed -i 's/"setlive".*$/"setlive"   "124.1"/g' app_build_434520.vdf
 				break;;
 			"nightly" ) 
 				sed -i 's/"setlive".*$/"setlive"   "nightly"/g' app_build_434520.vdf
@@ -92,6 +92,16 @@ if [ -d simutrans ]; then
 	rm -rf simutrans
 else
 	mv_pak
+fi
+
+if [ "$REPO_NAME" = "pak64" ]; then
+	echo "Please introduce the addons download URL (zip)"
+	read URL
+	wget $URL
+	unzip *.zip
+	rm *.zip
+	mv simutrans/addons/pak/* $REPO_NAME/
+	rm -rf simutrans
 fi
 
 upload_content
