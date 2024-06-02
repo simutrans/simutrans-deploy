@@ -160,7 +160,7 @@ update_steam_extended_pak() {
 }
 
 DIR=$(pwd)
-STEAM_CMD="$DIR/steam/sdk/tools/ContentBuilder/builder_linux/steamcmd.sh"
+STEAM_CMD="/usr/games/steamcmd"
 STEAM_USER="simutransbuild"
 echo "Base dir: $DIR"
 echo "Update AUR: $UPDATE_AUR"
@@ -188,12 +188,31 @@ fi
 
 echo "Updating Simutrans nightly builds"
 
+if [ "$OMIT_CHECK_CHANGES" = true ] || check_git simutrans-extended-git ; then
+	if [ "$UPDATE_AUR" = true ] ; then
+		update_aur simutrans-extended-git
+	fi
+	if [ "$UPDATE_STEAM" = true ] ; then
+		update_steam_extended
+	fi
+fi
+
+if [ "$OMIT_CHECK_CHANGES" = true ] || check_git simutrans-extended-pak128.britain ; then
+	if [ "$UPDATE_AUR" = true ] ; then
+		update_aur simutrans-extended-pak128.britain
+	fi
+	if [ "$UPDATE_STEAM" = true ] ; then
+		update_steam_extended_pak
+	fi
+fi
+
 
 if [ "$OMIT_CHECK_CHANGES" = true ] || check_svn simutrans-svn ; then
 	if [ "$UPDATE_AUR" = true ] ; then
 		update_aur simutrans-svn
 	fi
 	if [ "$UPDATE_STEAM" = true ] ; then
+        build_steam_release
 		update_steam_standard
 	fi
 fi
